@@ -395,6 +395,30 @@ $(function() {
 		player.skipSong();
 	});
 
+    // Blindtest button.
+    $('#blindtest-mode-button').on('click', () => {
+        //Blindtest mode off : fas fa-eye / on : fas fa-eye-slash
+        if ($('#blindtest-icon').attr('class') === 'fas fa-eye') {
+                //When blindtest mode enabled
+                // Update DJ name.
+                player.dbUpdate('dj_name_up', 'ytSettings', 'playlistDJname', 'BlindSheepTestBot');
+                // Update user max songs : no request song available
+                player.dbUpdate('max_song_up', 'ytSettings', 'songRequestsMaxParallel', String(0));
+                // Update max song length : 1m30 to play in order to find a song
+                player.dbUpdate('max_song_len_up', 'ytSettings', 'songRequestsMaxSecondsforVideo', String(90));
+                //Update icon
+                $('#blindtest-icon').attr('class', 'fas fa-eye-slash');
+        } else {
+            //When blindtest mode disabled
+            player.dbUpdate('dj_name_up', 'ytSettings', 'playlistDJname', 'blacksheepbot_');
+            // Update user max songs : no request song available
+            player.dbUpdate('max_song_up', 'ytSettings', 'songRequestsMaxParallel', String(1));
+            // Update max song length : 1m30 to play in order to find a song
+            player.dbUpdate('max_song_len_up', 'ytSettings', 'songRequestsMaxSecondsforVideo', String(480));
+            $('#blindtest-icon').attr('class', 'fas fa-eye');
+        }
+    });
+
 	// Mute button.
 	$('#mute-button').on('click', () => {
 		if (player.API.isMuted()) {
