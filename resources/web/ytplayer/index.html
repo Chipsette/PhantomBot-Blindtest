@@ -61,17 +61,16 @@
                         <!-- Player controls -->
                         <div class="player-controls">
                             <!-- Blindtest Mode activation -->
-                              <div class="left-controls">
+                            <div class="left-controls">
                                 <!-- Play pause controls -->
-                                <div class="play-pause-controls">
-                                    <div class="btn-group btn-group-justified">
-                                        <!-- Play and pause button handled in js -->
-                                         <p><b>Blindtest Mode</b>                     
-                                            <button type="button" class="btn btn-secondary btn-sm" id="blindtest-mode-button" data-toggle="tooltip" title="Blindtest Mode">
-                                            <i class="fa fa-eye" id="blindtest-icon"></i>
-                                            </button>
-                                        </p>
-                                    </div>
+                                <div class="btn-group btn-group-justified">
+                                    <!-- Play and pause button handled in js -->
+                                     <p><b>Blindtest Mode</b>                                        
+                                        <button type="button" class="btn btn-secondary btn-sm" id="blindtest-mode-button" data-toggle="tooltip" title="Blindtest Mode">
+                                        <i class="fas fa-eye" id="blindtest-icon"></i>
+                                        </button>
+                                        <div id="blindtest-status"> OFF</div>
+                                    </p>
                                 </div>
                             </div>
                             <!-- Left play, pause, skip, and save button and slider -->
@@ -131,6 +130,42 @@
 
                 <!-- Right side -->
                 <section class="col-md-5" id="right-section">
+
+                    <!-- Blindtest section section top panel -->
+                    <div id="blindtest-section" class="blindtest-section" style="display: none;">
+                        <!-- Header with buttons -->
+                        <div class="blindtest-section-title">Users Ranking
+                            <div class="btn-group btn-group-justified header-button">
+                                <!-- Add song to queue button -->
+                               <!-- <button type="button" class="btn btn-secondary btn-sm" id="queue-add-song-button" data-toggle="tooltip" title="Add song">
+                                    <i class="fas fa-plus"></i>
+                                </button> -->
+                                <!-- Settings button -->
+                                <!--<button type="button" class="btn btn-secondary btn-sm" id="settings-button" data-toggle="tooltip" title="Settings">
+                                    <i class="fas fa-cog"></i>
+                                </button>-->
+                                <!-- Clear queue button -->
+                                <!-- <button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="Clear queue">
+                                   <i class="fas fa-trash"></i>
+                               </button> -->
+                            </div>
+                        </div>
+                        <!-- Devider -->
+                        <div class="devider"></div>
+                        <!-- Queue table -->
+                        <div class="blindtest-table">
+                            <table id="blindtest-table-content" style="width: 100%;">
+                                <tr>
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 50%;">User</th>
+                                    <th style="width: 15%;">Points</th>
+                                    <th style="width: 15%;">Success in a row</th>
+                                    <th style="width: 10%; text-align: right; padding-right: 16px;">Actions</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
                     <!-- Queue section top panel -->
                     <div class="queue-section">
                         <!-- Header with buttons -->

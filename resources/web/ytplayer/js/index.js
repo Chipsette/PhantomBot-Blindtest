@@ -408,6 +408,10 @@ $(function() {
                 player.dbUpdate('max_song_len_up', 'ytSettings', 'songRequestsMaxSecondsforVideo', String(90));
                 //Update icon
                 $('#blindtest-icon').attr('class', 'fas fa-eye-slash');
+                //Update text activation status
+                $('#blindtest-status').html(' ON');
+                //Enable blindtest section ranking
+                $('#blindtest-section').css('display', 'block');
         } else {
             //When blindtest mode disabled
             player.dbUpdate('dj_name_up', 'ytSettings', 'playlistDJname', 'blacksheepbot_');
@@ -415,7 +419,12 @@ $(function() {
             player.dbUpdate('max_song_up', 'ytSettings', 'songRequestsMaxParallel', String(1));
             // Update max song length : 1m30 to play in order to find a song
             player.dbUpdate('max_song_len_up', 'ytSettings', 'songRequestsMaxSecondsforVideo', String(480));
+            //Update icon
             $('#blindtest-icon').attr('class', 'fas fa-eye');
+            //Update text activation status
+            $('#blindtest-status').html(' OFF');
+            //Enable blindtest section ranking
+            $('#blindtest-section').css('display', 'none');
         }
     });
 
