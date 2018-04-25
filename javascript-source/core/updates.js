@@ -28,6 +28,7 @@
             './commands/dualstreamCommand.js',
             './games/8ball.js',
             './games/adventureSystem.js',
+            './games/blindtest.js',
             './games/killCommand.js',
             './games/random.js',
             './games/roll.js',
