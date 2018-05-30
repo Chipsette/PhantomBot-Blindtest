@@ -68,3 +68,5 @@ nbproject/
 .classpath
 .project
 
+# TODO : delete on prod
+# reloadscripts=true
