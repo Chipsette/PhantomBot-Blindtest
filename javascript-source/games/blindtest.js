@@ -6,8 +6,8 @@
     countDown = $.getSetIniDbNumber('blindtestSettings', 'countDown', 120),
     maxPoints = $.getSetIniDbNumber('blindtestSettings', 'maxPoints', 10),
     halfPoints = $.getSetIniDbNumber('blindtestSettings', 'halfPoints', 5),
+    halfPoints = $.getSetIniDbNumber('blindtestSettings', 'halfPoints', 5),
     currentBlindtest = {}
-    currentSong = '';
     ;
 
     function blindtestUpdatePoints(user, points) {
@@ -57,7 +57,12 @@
      */
     function startBlindtest(username) {
         currentBlindtest.gameState = 1;
-
+        currentBlindtest.answerArray = [];
+        currentBlindtest.answerArrayTMP = [];
+        currentBlindtest.currentSong = [];
+        currentBlindtest.answerState = 0;
+      
+        
         var t = setTimeout(function() {
             runBlindtest();
         }, joinTime * 1e3);
@@ -72,32 +77,36 @@
     function tellToCrowdatThisTime(msg, timeLeft) {
         var t = setTimeout(function() {
             $.say($.lang.get(msg));
+
         }, timeLeft);
         return t;
     };
-
-
     
     /**
      * @function runBlindtest
      */
     function runBlindtest() {
+        if (currentBlindtest.gameState === 1) {
         currentBlindtest.gameState = 2;
 
-        //Vous avez 120 secondes pour trouver et le titre et l'interprète
+        //launch the youtube player in 1 sec
+        setTimeout($.say('/playsong 0'), 1e3);
+
+        //Warn messages
         t1 = tellToCrowdatThisTime('blindtestsystem.findsong', 1);
         //Il vous reste une  minute pour trouver la chanson !
-        t60 = tellToCrowdatThisTime('blindtestsystem.60left', 60);
-        t30 = tellToCrowdatThisTime('blindtestsystem.30left', 30);
-        t10 = tellToCrowdatThisTime('blindtestsystem.30left', 10);
-        t120 = tellToCrowdatThisTime('blindtestsystem.loose', 120);
+        t60 = tellToCrowdatThisTime('blindtestsystem.60left', countDown/2);
+        t30 = tellToCrowdatThisTime('blindtestsystem.30left', 90);
+        t10 = tellToCrowdatThisTime('blindtestsystem.10left', 110);
+        t120 = tellToCrowdatThisTime('blindtestsystem.loose', countDown);
 
         //get the song name and singer
-        currentSong = $.readFile(
+        currentBlindtest.currentSong = $.readFile(
                // youtubeVideo.getVideoTitle() + ' ',
                // baseFileOutputPath + 'currentsong.txt'
                '/ressources/addons/currentsong.txt'
             );
+        }
     };
 
     $.bind('command', function(event) {
@@ -124,7 +133,7 @@
                 $.say($.lang.get('blindtestsystem.start'));       
             }
             /**
-             * @commandpath blindtest begin to play - Start the gameplay             
+             * @commandpath blindtest begin to play - Start the gameplay
              * */            
             if (action.equalsIgnoreCase('begin')) {
                 $.say($.lang.get('blindtestsystem.begin', 10));
@@ -135,10 +144,55 @@
              * @commandpath blindtest answer wrapper
              * */            
             if (action.equalsIgnoreCase('r')) {
-               
-                
+                if (args.length == 0) {
+                    $.say($.whisperPrefix(sender) + $.lang.get('blindtestsystem.command.usage'));
+                    return;
+                }
+
+               if (currentSong && currentBlindtest.gameState == 2) {
+                //shift words/everything between parenthesis and brackets
+                answerArray = currentSong.replace('/\[(.+?)\]|\((.+?)\)+/gi', '').split('-');
+                answerArrayTMP = Object.values(answerArray);
+                var answerWordsCount = answerArray.count();
+                var correctMatches = 0;
+                //find the correct word if there is one...
+                answerArrayTMP.find(function(word) {
+                    //...retrieve its index inside the answer
+                    var indexMatch =args.indexOf(word.trim())
+                    if (indexMatch > 0) {
+                        correctMatches += 1;
+                        //pop the right answer from the array to match the answer left
+                        answerArrayTMP = answerArrayTMP.splice(indexMatch, 1)
+                    }
+                });
+                percentageAchievement = Math.round((correctMatches / answerWordsCount)* 100);
+                if (percentageAchievement >= 75) {
+                    //Stop the current song : it has been found !
+                    currentBlindtest.gameState = 1;
+                    currentBlindtest.answerState = 0;
+                    blindtestUpdatePoints(sender, maxPoints);
+                    $.say($.lang.get('blindtestsystem.win', sender, maxPoints));
+                    $.say($.lang.get('blindtestsystem.win.songname', currentSong));
+                    setTimeout($.say('blindtestsystem.nextsong', 5), 5e3);
+                    setTimeout(runBlindtest(), 5e3);
+                }
+                else {
+                    if (percentageAchievement >= 50) {
+                        answerState === 0 ? answerState = 1 : answerState = 2;  
+                        blindtestUpdatePoints(sender, halfPoints);
+                        $.say($.lang.get('blindtestsystem.halfwin', sender, halfpoints));
+                        //$.say($.lang.get('blindtestsystem.win.songname', currentSong));
+                    }
+                }
+               }
             }
 
+            if (action.equalsIgnoreCase('help')) {
+                if (args.length == 0) {
+                    $.say($.whisperPrefix(sender) + $.lang.get('blindtestsystem.command.usage'));
+                    return;
+                }
+            }
              /**
              * @commandpath blindtest top5 - Announce the top 5 adventurers in the chat (most points gained)
              */
@@ -151,7 +205,8 @@
     function commandsToEnable() {
         $.registerChatCommand('./games/blindtest.js', 'blindtest', 7);
         $.registerChatSubcommand('blindtest', 'top5', 7);
-        $.registerChatSubcommand('blindtest', 'top5', 7);
+        $.registerChatSubcommand('blindtest', 'start', 7);
+        $.registerChatSubcommand('blindtest', 'help', 7);
         $.say($.lang.get('blindtestsystem.endinit'));
 
     }
@@ -167,8 +222,10 @@
 
     function ModuleToEnable() {
         $.say($.lang.get('blindtestsystem.init'));
-        $.say('/module enable ./systems/youtubePlayer.js');
-        setTimeout([commandsToDisable, commandsToEnable], 2e3); //wait 2 scds before enabling/disabling commands
+       // $.say('/module enable ./systems/youtubePlayer.js');
+       sendCommand("module enablesilent ./systems/youtubePlayer.js");
+       setTimeout(function() { doQuery(); }, 500);
+    setTimeout([commandsToDisable, commandsToEnable], 2e3); //wait 2 scds before enabling/disabling commands
     }
 
     function ModuleToDisable() {

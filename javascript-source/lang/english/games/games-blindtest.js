@@ -5,15 +5,14 @@ $.lang.register('blindtestsystem.win', 'Congratulations! You have won 5 points! 
 $.lang.register('blindtestsystem.lose', 'You have fail! You\'ll do better next time!');
 $.lang.register('blindtestsystem.top5', 'The top 5 adventurers are: $1.');
 $.lang.register('blindtestsystem.top5.empty', 'There haven\'t been any adventure winners recorded yet.');
-$.lang.register('blindtestsystem.newsong', 'New Song! You have to minutes to figure it out!');
+$.lang.register('blindtestsystem.newsong', 'New Song! You have 2 minutes to figure it out!');
+$.lang.register('blindtestsystem.nextsong', 'The nexsong is coming in $1 seconds !');
+$.lang.register('blindtestsystem.command.usage', 'To answer, type !r <songname> <singer/groupname> in any order you want. You gain 10 points having the whole answer and 5 points for a partial one. Be ready and fast !');
+
+//win
+$.lang.register('blindtestsystem.win', 'Congrats ! $1 has won ! You earn $2 points !');
+$.lang.register('blindtestsystem.win.songname', 'The right answer is : $1');
 
 //Technical messages
 $.lang.register('blindtestsystem.init', 'Technical initialization in progress...');
 $.lang.register('blindtestsystem.endinit', 'Technical initialization has ended.');
-
-
-
-//Enable and disable Module and Commands : copy paste in every language file
-$.lang.register('blindtestsystem.module.enable.ytb', '/module enable ./systems/youtubePlayer.js');
-$.lang.register('blindtestsystem.module.disable.blindtest', '/module disable ./games/blindtest.js');
-$.lang.register('blindtestsystem.commands.disabled.', 'Disabled commands : songrequest, addsong, previoussong, currentsong, wrongsong, nextsong');
